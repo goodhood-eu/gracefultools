@@ -8,6 +8,7 @@ const events = [
 let isShuttingDown = false;
 let processTimeout = 1000;
 let httpListener;
+let onClose;
 
 const handleClose = () => {
   info('Closed remaining connections.');
@@ -26,6 +27,7 @@ const getShutdownHandler = (event) => () => {
 
   isShuttingDown = true;
   httpListener.close(handleClose);
+  if (typeof onClose === 'function') onClose(event);
 
   setTimeout(handleTimeout, processTimeout);
 };
@@ -36,12 +38,13 @@ const middleware = () => (req, res, next) => {
   res.status(502).send('Server is shutting down.');
 };
 
-const start = (app, options) => {
+const start = (app, options, handler) => {
   const { host, port: desiredPort, timeout } = options;
   const port = desiredPort || 3000;
   const message = `Server listening on http://${host || 'localhost'}:${port}`;
 
   if (typeof timeout === 'number') processTimeout = timeout;
+  onClose = handler;
 
   const sendEvents = (text) => {
     info(text);

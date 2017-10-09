@@ -19,5 +19,6 @@ app.use(gracefulMiddleware());
 ...
 
 // When you're ready to start your app
-gracefulStart(app, { host, port, timeout });
+// onShutdown - invoked when shutdown started
+gracefulStart(app, { host, port, timeout }, onShutdown);
 ```

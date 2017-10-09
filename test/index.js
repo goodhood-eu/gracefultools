@@ -89,6 +89,16 @@ describe('index', () => {
     expect(server.listen.withArgs(serverOptions.port, host).calledOnce).to.be.true;
   });
 
+  it('should call shutdown handler', (done) => {
+    const spy = sinon.spy();
+    instance.start(server, serverOptions, spy);
+    process.kill(process.pid, SIGNAL);
+    process.nextTick(() => {
+      expect(spy.withArgs(SIGNAL).calledOnce).to.be.true;
+      done();
+    });
+  });
+
   it(`should call 'server.close()' when receiving a ${SIGNAL}`, (done) => {
     process.once(SIGNAL, () => {
       process.nextTick(() => {

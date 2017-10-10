@@ -91,12 +91,14 @@ describe('index', () => {
 
   it('should call shutdown handler', (done) => {
     const spy = sinon.spy();
+    process.once(SIGNAL, () => {
+      process.nextTick(() => {
+        expect(spy.withArgs(SIGNAL).calledOnce).to.be.true;
+        done();
+      });
+    });
     instance.start(server, serverOptions, spy);
     process.kill(process.pid, SIGNAL);
-    process.nextTick(() => {
-      expect(spy.withArgs(SIGNAL).calledOnce).to.be.true;
-      done();
-    });
   });
 
   it(`should call 'server.close()' when receiving a ${SIGNAL}`, (done) => {

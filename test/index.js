@@ -11,7 +11,6 @@ const serverOptions = {
 
 describe('index', () => {
   let server;
-  let sandbox;
   let exitStub;
 
   let instance;
@@ -29,8 +28,7 @@ describe('index', () => {
       listen: sinon.stub().returnsThis(),
       close: sinon.stub().returnsThis(),
     };
-    sandbox = sinon.sandbox.create({ useFakeTimers: true });
-    exitStub = sandbox.stub(process, 'exit');
+    exitStub = sinon.stub(process, 'exit');
     process.send = sinon.spy();
 
     instance = proxyquire('../index', {});
@@ -44,7 +42,7 @@ describe('index', () => {
   });
 
   afterEach(() => {
-    sandbox.restore();
+    sinon.restore();
     delete process.send;
   });
 
@@ -106,17 +104,20 @@ describe('index', () => {
   });
 
   it(`should call 'process.exit()' after ${TIMEOUT}ms when receiving a ${SIGNAL}`, (done) => {
+    const clock = sinon.useFakeTimers();
+
     process.once(SIGNAL, () => {
       process.nextTick(() => {
         // It shouldn't have called `process.exit()` right after the signal was sent.
         expect(exitStub.notCalled).to.be.true;
 
         // Advance the clock to a bit after the timeout.
-        sandbox.clock.tick(TIMEOUT + 10);
+        clock.tick(TIMEOUT + 10);
 
         // At this point, the timeout handler should have triggered, and
         // `process.exit()` should have been called.
         expect(exitStub.calledOnce).to.be.true;
+        clock.restore();
         done();
       });
     });

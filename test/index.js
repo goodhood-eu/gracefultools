@@ -25,13 +25,6 @@ describe('index', () => {
   });
 
   beforeEach(() => {
-    const overload = {
-      winston: {
-        info() {},
-        warn() {},
-      },
-    };
-
     server = {
       listen: sinon.stub().returnsThis(),
       close: sinon.stub().returnsThis(),
@@ -40,7 +33,7 @@ describe('index', () => {
     exitStub = sandbox.stub(process, 'exit');
     process.send = sinon.spy();
 
-    instance = proxyquire('../index', overload);
+    instance = proxyquire('../index', {});
     req = {};
     res = {
       setHeader: sinon.stub().returnsThis(),

@@ -1,4 +1,4 @@
-const { info, warn } = require('winston');
+const debug = require('debug')('gracefultools');
 
 const events = [
   'SIGTERM',
@@ -11,19 +11,19 @@ let httpListener;
 let onClose;
 
 const handleClose = () => {
-  info('Closed remaining connections.');
+  debug('Closed remaining connections.');
   process.exit(0);
 };
 
 const handleTimeout = () => {
-  warn('Couldn\'t close connections in time, forcefully shutting down.');
+  debug('Couldn\'t close connections in time, forcefully shutting down.');
   process.exit(1);
 };
 
 const getShutdownHandler = (event) => () => {
   if (isShuttingDown) return;
 
-  info(`Received ${event}, shutting down.`);
+  debug(`Received ${event}, shutting down.`);
 
   isShuttingDown = true;
   httpListener.close(handleClose);
@@ -47,7 +47,7 @@ const start = (app, options, handler) => {
   onClose = handler;
 
   const sendEvents = (text) => {
-    info(text);
+    debug(text);
     if (process.connected) process.send('ready');
   };
 

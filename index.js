@@ -47,7 +47,7 @@ const start = (app, options, handler) => {
   onClose = handler;
 
   const sendEvents = (text) => {
-    debug(text);
+    console.log(text);
     if (process.connected) process.send('ready');
   };
 

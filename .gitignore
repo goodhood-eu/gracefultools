@@ -31,6 +31,3 @@ node_modules/*
 
 # MacOS bullshit
 .DS_Store
-
-# NPM can't generate this file properly, best to just ignore it
-package-lock.json

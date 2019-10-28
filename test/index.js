@@ -76,7 +76,7 @@ describe('index', () => {
 
   it('should start listening with host', () => {
     const host = 'hallo.de';
-    instance.start(server, Object.assign({}, serverOptions, { host }));
+    instance.start(server, { ...serverOptions, host });
     expect(server.listen.withArgs(serverOptions.port, host).calledOnce).to.be.true;
   });
 

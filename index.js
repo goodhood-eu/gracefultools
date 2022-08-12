@@ -39,9 +39,14 @@ const middleware = () => (req, res, next) => {
 };
 
 const start = (app, options, handler) => {
-  const { host, port: desiredPort, timeout } = options;
+  const { timeout, port: desiredPort } = options;
+
   const port = desiredPort || 3000;
-  const message = `Server listening on http://${host || 'localhost'}:${port}`;
+  const protocol = options.secure ? 'https' : 'http';
+  const host = options.host || 'localhost';
+  const address = `${protocol}://${host}:${port}`;
+
+  const message = `Server listening on ${address}`;
 
   if (typeof timeout === 'number') processTimeout = timeout;
   onClose = handler;
